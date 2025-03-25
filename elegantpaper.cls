@@ -4,7 +4,7 @@
 % Lastest Version: https://github.com/ElegantLaTeX/ElegantPaper
 
 % --- Class structure: identification part
-\ProvidesClass{elegantpaper}[2022/12/31 v0.11 ElegantLaTeX Paper class]
+\ProvidesClass{elegantpaper}[2025/03/26 v0.12 ElegantLaTeX Paper class]
 \NeedsTeXFormat{LaTeX2e} 
 
 %%%
@@ -33,6 +33,7 @@
 \DeclareVoidOption{ctexfont}{\ekv{chinesefont=ctexfont}}
 \DeclareVoidOption{founder}{\ekv{chinesefont=founder}}
 \DeclareVoidOption{nofont}{\ekv{chinesefont=nofont}}
+\DeclareVoidOption{lcpu-overleaf}{\ekv{chinesefont=lcpu-overleaf}}
 
 \DeclareVoidOption{newtx}{\ekv{math=newtx}}
 \DeclareVoidOption{mtpro2}{\ekv{math=mtpro2}}
@@ -46,7 +47,7 @@
 \hypersetup{
   pdfborder={0 0 0},
   colorlinks=true,
-  linkcolor={winered},
+  linkcolor={black},
   urlcolor={winered},
   filecolor={winered},
   citecolor={winered},
@@ -69,7 +70,6 @@
 \RequirePackage{booktabs}
 \RequirePackage{multicol}
 \RequirePackage{multirow}
-% \RequirePackage{linegoal}
 \RequirePackage{xcolor}
 \RequirePackage{graphicx}
 \RequirePackage{fancyvrb}
@@ -77,7 +77,7 @@
 \RequirePackage{hologo}
 
 \linespread{1.35}
-\graphicspath{{image/}{figure/}{fig/}{img/}}
+\graphicspath{{image/}{figure/}{fig/}{img/}{images/}}
 
 % caption settings 
 \RequirePackage[labelfont={bf}]{caption}
@@ -88,22 +88,17 @@
 \RequirePackage[shortlabels,inline]{enumitem}
 \setlist{nolistsep}
 
-
 % define the hyperref color 
 \RequirePackage{xcolor}
 \definecolor{winered}{rgb}{0.5,0,0}
-
 \definecolor{lightgrey}{rgb}{0.95,0.95,0.95}
 \definecolor{commentcolor}{RGB}{0,100,0}
 \definecolor{frenchplum}{RGB}{190,20,83}
-
 
 % add the email cmd 
 \newcommand\email[1]{\href{mailto:#1}{\nolinkurl{#1}}}
 
 % font settings
-
-
 \PassOptionsToPackage{no-math}{fontspec}
 \PassOptionsToPackage{quiet}{fontspec}
 \RequirePackage{iftex}
@@ -117,7 +112,6 @@
     BoldItalicFont = *-bolditalic ,
     Extension = .otf ,
     Scale = 1.0]
-    
   \setsansfont{texgyreheros}[
     UprightFont = *-regular ,
     BoldFont = *-bold ,
@@ -144,17 +138,30 @@
     \newcommand*{\heiti}{\CJKfamily{zhhei}}
     \newcommand*{\kaishu}{\CJKfamily{zhkai}}
     \newcommand*{\fangsong}{\CJKfamily{zhfs}}}{\relax}
-  
+
   \ifdefstring{\ELEGANT@chinesefont}{nofont}{
     \RequirePackage[UTF8,scheme=plain,fontset=none]{ctex}}{\relax}
 
   \ifdefstring{\ELEGANT@chinesefont}{ctexfont}{
     \RequirePackage[UTF8,scheme=plain]{ctex}}{\relax}
   
+  \ifdefstring{\ELEGANT@chinesefont}{lcpu-overleaf}{
+    \RequirePackage[UTF8,scheme=plain,fontset=none]{ctex}
+    \setCJKmainfont[BoldFont={FandolSong-Bold},ItalicFont={KaiTi}]{SimSun}
+    \setCJKsansfont[BoldFont={Microsoft YaHei-Bold}]{Microsoft YaHei}
+    \setCJKmonofont[BoldFont={Fira Mono-Bold}]{Fira Mono}
+    \setCJKfamilyfont{zhsong}{SimSun}
+    \setCJKfamilyfont{zhhei}{Microsoft YaHei}
+    \setCJKfamilyfont{zhkai}[BoldFont={Microsoft YaHei}]{KaiTi}
+    \setCJKfamilyfont{zhfs}[BoldFont={Microsoft YaHei}]{FangSong}
+    \newcommand*{\songti}{\CJKfamily{zhsong}}
+    \newcommand*{\heiti}{\CJKfamily{zhhei}}
+    \newcommand*{\kaishu}{\CJKfamily{zhkai}}
+    \newcommand*{\fangsong}{\CJKfamily{zhfs}}}{\relax}
+
   \AfterEndPreamble{
     \setlength\parindent{2\ccwd}}
 }{\relax}
-
 
 \ifcsname kaishu\endcsname
   \newcommand{\citshape}{\kaishu}
@@ -257,7 +264,6 @@
   \newcommand\tabref[1]{{\bfseries Table~\ref{#1}}}
   \newcommand{\ebibname}{Bibliography}}{\relax}
 
-
 \def\bibfont{\footnotesize}
 
 \AtBeginEnvironment{verbatim}{\microtypesetup{activate=false}}
@@ -274,16 +280,17 @@
   \edef\1{\the#1}
   \ifx\1\empty
 }
+
 \newtoks\version
 \newtoks\institute
-
+    
 \renewcommand\maketitle{\par
   \begingroup
     \renewcommand\thefootnote{\@fnsymbol\c@footnote}%
     \def\@makefnmark{\rlap{\@textsuperscript{\normalfont\@thefnmark}}}%
     \long\def\@makefntext##1{\parindent 1em\noindent
-            \hb@xt@0.1em{%
-                \hss\@textsuperscript{\normalfont\@thefnmark}}##1}%
+      \hb@xt@0.1em{%
+        \hss\@textsuperscript{\normalfont\@thefnmark}}##1}%
     \if@twocolumn
       \ifnum \col@number=\@ne
         \@maketitle
@@ -317,29 +324,12 @@
   \null
   \vskip 2em%
   \begin{center}%
-  \let \footnote \thanks
-    {\LARGE\bfseries \@title \par}%
+    \let \footnote \thanks
+    {\LARGE\sffamily\bfseries \@title \par}%
     \vskip 1.5em%
-    {\large
-      \lineskip .5em%
-      \begin{tabular}[t]{c}%
-        \@author\\[1ex]
-      \end{tabular}\par}
-      \the\institute%
-\vskip 0.5ex%
-\IfEmpty\version
-\else 
-{\small\normalfont\citshape\versiontext\the\version}
-\fi
-\ifx\@date\empty
-\else
-\vskip 0.1em%
- {\small\normalfont\citshape\updatetext\@date}%
-\fi
   \end{center}%
   \par
 }
-  
 
 \RequirePackage{listings}
 \renewcommand{\ttdefault}{cmtt}
@@ -352,20 +342,18 @@
 \lstset{basicstyle=\scriptsize\ttfamily,style=estyle}
 
 \lstset{language=[LaTeX]TeX,
-	texcsstyle=*\color{winered},
-	numbers=none,
-	breaklines=true,
-	keywordstyle=\color{winered},
-	frame=tlbr,framesep=4pt,framerule=0pt,
-	commentstyle=\color{commentcolor},
-	emph={elegantpaper,fontenc,fontspec,xeCJK,FiraMono,xunicode,newtxmath,figure,fig,image,img,table,itemize,enumerate,newtxtext,newtxtt,ctex,microtype,description,times,newtx,booktabs,tabular,PDFLaTeX,XeLaTeX,type1cm,BibTeX,cite,gbt7714,lang},
-	emphstyle={\color{frenchplum}},
-	morekeywords={DeclareSymbolFont,SetSymbolFont,toprule,midrule,bottomrule,institute,version,includegraphics,setmainfont,setsansfont,setmonofont ,setCJKmainfont,setCJKsansfont,setCJKmonofont,RequirePackage,figref,tabref,email,maketitle,keywords,zhdate,zhtoday},
-	tabsize=2,
-	backgroundcolor=\color{lightgrey}
+  texcsstyle=*\color{winered},
+  numbers=none,
+  breaklines=true,
+  keywordstyle=\color{winered},
+  frame=tlbr,framesep=4pt,framerule=0pt,
+  commentstyle=\color{commentcolor},
+  emph={elegantpaper,fontenc,fontspec,xeCJK,FiraMono,xunicode,newtxmath,figure,fig,image,img,table,itemize,enumerate,newtxtext,newtxtt,ctex,microtype,description,times,newtx,booktabs,tabular,PDFLaTeX,XeLaTeX,type1cm,BibTeX,cite,gbt7714,lang},
+  emphstyle={\color{frenchplum}},
+  morekeywords={DeclareSymbolFont,SetSymbolFont,toprule,midrule,bottomrule,institute,version,includegraphics,setmainfont,setsansfont,setmonofont ,setCJKmainfont,setCJKsansfont,setCJKmonofont,RequirePackage,figref,tabref,email,maketitle,keywords,zhdate,zhtoday},
+  tabsize=2,
+  backgroundcolor=\color{lightgrey}
 }
-
-
 
 % restore the tt default family to lmodern tt family
 \renewcommand\ttdefault{lmtt}
